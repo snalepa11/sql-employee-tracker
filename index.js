@@ -19,39 +19,95 @@ var employee_trackertracker = function () {
             message: 'What would you like to do?',
             choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role', 'Log Out']
         }
-    ]).then((answers) => {
-        if (answers.prompt === 'view all departments') {
-            db.query(`SELECT * FROM departments`, (err, result) => {
-                if (err) throw err;
-                console.log("Viewing All Departments: ");
-                console.table(result);
-                employee_tracker();
-            });
-        } else if (answers.prompt === 'view all roles') {
-            db.query(`SELECT * FROM roles`, (err, result) => {
-                if (err) throw err;
-                console.log("Viewing All Roles: ");
-                console.table(result);
-                employee_tracker();
-            });
-        } else if (answers.prompt === 'view all employees') {
-            db.query(`SELECT * FROM employees`, (err, result) => {
+    ]).then((answer) => {
+        switch (answer.queryOptions) {
+            case "view all departments":
+                viewDepartments();
+                break;
+            case "view all roles":
+                viewRoles();
+                break;
+            case "view all employees":
+                viewEmployees();
+                break;
+
+            case "add a department":
+                newDepartment();
+                break;
+            case "add a role":
+                newRole();
+                break;
+            case "add an employee":
+                newEmployee();
+                break;
+            case "update an employee role":
+                updateRole();
+                break;
+            case "Log Out":
+                logOut();
+                break;
+        }
+    });
+}
+
+
+
+
+
+function viewDepartments() {
+    db.query(`SELECT * FROM departments`, (err, result) => {
+        if (err) throw err;
+        console.log("Viewing All Departments: ");
+        console.table(result);
+        employee_tracker();
+    });
+}
+
+function viewRoles() {
+    db.query(`SELECT * FROM roles`, (err, result) => {
+        if (err) throw err;
+        console.log("Viewing All Roles: ");
+        console.table(result);
+        employee_tracker();
+    });
+}
+
+function viewEmployees() {
+    db.query(`SELECT * FROM employees`, (err, result) => {
+        if (err) throw err;
+        console.log("Viewing All Employees: ");
+        console.table(result);
+        employee_tracker();
+    });
+}
+
+function newDepartment() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the department you would like to add?",
+            name: "addDepartment",
+        },
+    ]).then(answers => {
+        db.query(`INSERT INTO department (department) VALUES ${answers.newDepartment}`,
+            (err, result) => {
                 if (err) throw err;
                 console.log("Viewing All Employees: ");
                 console.table(result);
                 employee_tracker();
-            });
-        }
-
-        //use left joins going forward
-
-
-
-        else if (answers.prompt === 'Log Out') {
-            db.end();
-            console.log("Adios!");
-        }
+            }
+        );
     })
+};
 
+func
+//use left joins going forward
+
+
+
+function logOut() {
+    db.end();
+    console.log("Adios!");
 }
+
 
