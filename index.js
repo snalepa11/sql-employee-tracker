@@ -81,6 +81,7 @@ function viewEmployees() {
     });
 }
 
+//Adds a new department
 function newDepartment() {
     inquirer.prompt([
         {
@@ -92,7 +93,7 @@ function newDepartment() {
         db.query(`INSERT INTO department (department) VALUES ${answers.newDepartment}`,
             (err, result) => {
                 if (err) throw err;
-                console.log("Viewing All Employees: ");
+                console.log("Viewing New Department: ");
                 console.table(result);
                 employee_tracker();
             }
@@ -100,14 +101,111 @@ function newDepartment() {
     })
 };
 
-func
+//Adds a new role
+function newRole() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the title of the role you would like to add?",
+            name: "addNewTitle",
+        },
+        {
+            type: "input",
+            message: "What is the department of the role you would like to add?",
+            name: "addNewDepartment",
+        },
+        {
+            type: "input",
+            message: "What is the salary of the role you would like to add?",
+            name: "addNewSalary",
+        },
+    ]).then((answers => {
+        db.query(`INSERT INTO roles VALUES ${answers.addNewTitle} , ${answers.addNewDepartment} , ${answers.addNewSalary}`,
+            (err, result) => {
+                if (err) throw err;
+                console.log("Viewing New Role: ");
+                console.table(result);
+                employee_tracker();
+            }
+        );
+    }));
+};
 //use left joins going forward
+function newEmployee() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the first name of the employee you would like to add?",
+            name: "newEmployeeFirstName",
+        },
+        {
+            type: "input",
+            message: "What is the last name of the employee you would like to add?",
+            name: "newEmployeeLastName",
+        },
+        {
+            type: "input",
+            message: "What is the title for this employee?",
+            name: "newEmployeeTitle",
+        },
+        {
+            type: "input",
+            message: "What is the employee role id?",
+            name: "newEmployeeRoleId",
+        },
+        {
+            type: "input",
+            message: "What is the salary for this employee?",
+            name: "newEmployeeSalary",
+        },
+        {
+            type: "input",
+            message: "What is the manager for this employee?",
+            name: "newEmployeeManager",
+        },
+    ]).then((answers => {
+        db.query(`INSERT INTO employees VALUES ${answers.newEmployeeFirstName} , ${answers.newEmployeeLastName} , ${answers.newEmployeeTitle} , ${answers.newEmployeeRoleId} , ${answers.newEmployeeSalary} , ${answers.newEmployeeManager}`,
+            (err, result) => {
+                if (err) throw err;
+                console.log("Viewing New Employee: ");
+                console.table(result);
+                employee_tracker();
+            }
+        );
+    }));
+};
+
+function updateRole(newEmployee) {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "employee_id",
+            message: "which employee would you like to update the role for",
+        },
+        {
+            type: "input",
+            message: "What is the role id you would like to choose ?",
+            name: "role_id",
+        },
+    ]).then((answer) => {
+        db.query(
+            `UPDATE employees 
+           SET employee_id = first_name, last_name
+           WHERE role_id = employee_id
+           SET role_id = role_id `,
+            (err, result) => {
+                if (err) throw err;
+                console.log("Viewing New Employee: ");
+                console.table(result);
+                employee_tracker();
+            }
+        );
+    };
 
 
-
-function logOut() {
-    db.end();
-    console.log("Adios!");
-}
+    function logOut() {
+        db.end();
+        console.log("Adios!");
+    }
 
 
