@@ -1,21 +1,29 @@
 const inquirer = require('inquirer');
 const db = require('./db/connection');
+const fs = require('fs');
 
+const sql = fs.readFileSync('./db/schema.sql').toString();
 
 //Starts server after database connected
-db.connect(err => {
+db.connect((err, client) => {
     if (err) throw err;
     console.log('Database connected.');
+    // client.query(sql, function (err, result) {
+    //     if (err) {
+    //         console.log('error: ', err);
+    //     }
+    // });
     employee_tracker();
 });
 
 //put predefined work into a function
 
-var employee_trackertracker = function () {
+var employee_tracker = function () {
     //Staarts the command line question flow
     inquirer.prompt([
         {
             type: 'list',
+            name: 'questions',
             message: 'What would you like to do?',
             choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role', 'Log Out']
         }
@@ -189,7 +197,7 @@ function updateRole(newEmployee) {
         },
     ]).then((answer) => {
         db.query(
-            `UPDATE employees 
+            `UPDATE employees *
            SET employee_id = first_name, last_name
            WHERE role_id = employee_id
            SET role_id = role_id `,
@@ -198,14 +206,14 @@ function updateRole(newEmployee) {
                 console.log("Viewing New Employee: ");
                 console.table(result);
                 employee_tracker();
-            }
-        );
-    };
+            });
+        });
+};
 
 
-    function logOut() {
-        db.end();
-        console.log("Adios!");
-    }
+function logOut() {
+    db.end();
+    console.log("Adios!");
+}
 
 
