@@ -7,16 +7,16 @@ VALUES
 
 INSERT INTO roles (title, department_id, salary)
 VALUES 
-       ('Sales Lead', 'Sales', 100000),
-       ('Sales Person', "Sales", 80000),
-       ('Lead Engineer', 'Engineering', 150000),
+       ('Sales Lead', 4, 100000),
+       ('Sales Person', 4, 80000),
+       ('Lead Engineer', 1, 150000),
        ('Software Engineer', 'Engineering', 120000),
        ('Account Manager', 'Finance', 160000),
        ('Accountant', 'Finance', 125000),
        ('Legal Team Lead', 'Legal', 250000),
        ('Lawyer', 'Legal', 190000);
 
-INSERT INTO employees (first_name, last_name, title, role_id, salary, manager_id)
+INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES 
        ('John','Doe','Sales Lead', 'Sales', 100000),
        ('Mike', 'Chan','Sales Person', "Sales", 80000, 'John Doe'),

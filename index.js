@@ -1,22 +1,16 @@
 const inquirer = require('inquirer');
 const db = require('./db/connection');
-const fs = require('fs');
+const fs = require('fs')
 
-const sql = fs.readFileSync('./db/schema.sql').toString();
 
-//Starts server after database connected
-db.connect((err, client) => {
+db.connect((err) => {
     if (err) throw err;
     console.log('Database connected.');
-    // client.query(sql, function (err, result) {
-    //     if (err) {
-    //         console.log('error: ', err);
-    //     }
-    // });
+
     employee_tracker();
 });
 
-//put predefined work into a function
+
 
 var employee_tracker = function () {
     //Staarts the command line question flow
@@ -28,7 +22,7 @@ var employee_tracker = function () {
             choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role', 'Log Out']
         }
     ]).then((answer) => {
-        switch (answer.queryOptions) {
+        switch (answer.questions) {
             case "view all departments":
                 viewDepartments();
                 break;
@@ -66,16 +60,17 @@ function viewDepartments() {
     db.query(`SELECT * FROM departments`, (err, result) => {
         if (err) throw err;
         console.log("Viewing All Departments: ");
-        console.table(result);
+        console.table(result.rows);
         employee_tracker();
+
     });
 }
 
 function viewRoles() {
-    db.query(`SELECT * FROM roles`, (err, result) => {
+    db.query(`SELECT * FROM roles LEFT JOIN departments ON roles.department_id = departments.id`, (err, result) => {
         if (err) throw err;
         console.log("Viewing All Roles: ");
-        console.table(result);
+        console.table(result.rows);
         employee_tracker();
     });
 }
@@ -84,7 +79,7 @@ function viewEmployees() {
     db.query(`SELECT * FROM employees`, (err, result) => {
         if (err) throw err;
         console.log("Viewing All Employees: ");
-        console.table(result);
+        console.table(result.rows);
         employee_tracker();
     });
 }
@@ -98,11 +93,10 @@ function newDepartment() {
             name: "addDepartment",
         },
     ]).then(answers => {
-        db.query(`INSERT INTO department (department) VALUES ${answers.newDepartment}`,
+        db.query(`INSERT INTO departments (department) VALUES ('${answers.addDepartment}')`,
             (err, result) => {
                 if (err) throw err;
-                console.log("Viewing New Department: ");
-                console.table(result);
+                console.log("New Department Created: ");
                 employee_tracker();
             }
         );
@@ -111,6 +105,9 @@ function newDepartment() {
 
 //Adds a new role
 function newRole() {
+    db.query("SELECT * FROM departments", (err, departments)=>{
+        const departmentChoices = departments.rows.map((dep)=> ({ name: dep.department, value: dep.id}))
+
     inquirer.prompt([
         {
             type: "input",
@@ -118,9 +115,10 @@ function newRole() {
             name: "addNewTitle",
         },
         {
-            type: "input",
+            type: "list",
             message: "What is the department of the role you would like to add?",
-            name: "addNewDepartment",
+            name: "departmentId",
+            choices: departmentChoices
         },
         {
             type: "input",
@@ -128,7 +126,7 @@ function newRole() {
             name: "addNewSalary",
         },
     ]).then((answers => {
-        db.query(`INSERT INTO roles VALUES ${answers.addNewTitle} , ${answers.addNewDepartment} , ${answers.addNewSalary}`,
+        db.query(`INSERT INTO roles (title, department_id, salary) VALUES ('${answers.addNewTitle}' , ${answers.departmentId}, '${answers.addNewSalary}')`,
             (err, result) => {
                 if (err) throw err;
                 console.log("Viewing New Role: ");
@@ -137,6 +135,7 @@ function newRole() {
             }
         );
     }));
+})
 };
 //use left joins going forward
 function newEmployee() {
@@ -184,36 +183,47 @@ function newEmployee() {
 };
 
 function updateRole(newEmployee) {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "employee_id",
-            message: "which employee would you like to update the role for",
-        },
-        {
-            type: "input",
-            message: "What is the role id you would like to choose ?",
-            name: "role_id",
-        },
-    ]).then((answer) => {
-        db.query(
-            `UPDATE employees *
-           SET employee_id = first_name, last_name
-           WHERE role_id = employee_id
-           SET role_id = role_id `,
-            (err, result) => {
-                if (err) throw err;
-                console.log("Viewing New Employee: ");
-                console.table(result);
-                employee_tracker();
-            });
+    db.query("SELECT * FROM roles", (err, roles) => {
+
+        const roleChoices = roles.map((role)=> ({ name: role.title, value: role.id}))
+
+        db.query("SELECT * FROM employees", (err, employees) => {
+
+            const employeeChoices = employees.map((person)=> ({ name: person.first_name + " " + person.last_name, value: person.id}))
+
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employee_id",
+                message: "which employee would you like to update the role for",
+                choices: employeeChoices
+            },
+            {
+                type: "list",
+                message: "What is the role id you would like to choose ?",
+                name: "role_id",
+                choices: roleChoices
+            },
+        ]).then((answer) => {
+            db.query(
+                `UPDATE employees 
+           SET role_id = ${answer.role_id}
+           WHERE id = ${answer.emplyee_id}`,
+                (err, result) => {
+                    if (err) throw err;
+                    console.log("Viewing New Employee: ");
+                    console.table(result);
+                    employee_tracker();
+                });
         });
-};
+    })
+})};
 
 
 function logOut() {
     db.end();
     console.log("Adios!");
+    process.exit();
 }
 
 
