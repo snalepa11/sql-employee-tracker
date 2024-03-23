@@ -76,7 +76,7 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-    db.query(`SELECT * FROM employees`, (err, result) => {
+    db.query(`SELECT * FROM employees LEFT JOIN roles ON employees.role_id = roles.id`, (err, result) => {
         if (err) throw err;
         console.log("Viewing All Employees: ");
         console.table(result.rows);
@@ -96,7 +96,6 @@ function newDepartment() {
         db.query(`INSERT INTO departments (department) VALUES ('${answers.addDepartment}')`,
             (err, result) => {
                 if (err) throw err;
-                console.log("New Department Created: ");
                 employee_tracker();
             }
         );
@@ -129,8 +128,6 @@ function newRole() {
         db.query(`INSERT INTO roles (title, department_id, salary) VALUES ('${answers.addNewTitle}' , ${answers.departmentId}, '${answers.addNewSalary}')`,
             (err, result) => {
                 if (err) throw err;
-                console.log("Viewing New Role: ");
-                console.table(result);
                 employee_tracker();
             }
         );
@@ -157,25 +154,18 @@ function newEmployee() {
         },
         {
             type: "input",
-            message: "What is the employee role id?",
-            name: "newEmployeeRoleId",
-        },
-        {
-            type: "input",
             message: "What is the salary for this employee?",
             name: "newEmployeeSalary",
         },
         {
             type: "input",
-            message: "What is the manager for this employee?",
+            message: "Who is the manager for this employee?",
             name: "newEmployeeManager",
         },
     ]).then((answers => {
-        db.query(`INSERT INTO employees VALUES ${answers.newEmployeeFirstName} , ${answers.newEmployeeLastName} , ${answers.newEmployeeTitle} , ${answers.newEmployeeRoleId} , ${answers.newEmployeeSalary} , ${answers.newEmployeeManager}`,
+        db.query(`INSERT INTO employees VALUES ${answers.newEmployeeFirstName} , ${answers.newEmployeeLastName} , ${answers.newEmployeeTitle} , ${answers.newEmployeeSalary} , ${answers.newEmployeeManager}`,
             (err, result) => {
                 if (err) throw err;
-                console.log("Viewing New Employee: ");
-                console.table(result);
                 employee_tracker();
             }
         );
