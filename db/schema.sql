@@ -1,13 +1,14 @@
 DROP DATABASE IF EXISTS employee_tracker_db;
 CREATE DATABASE employee_tracker_db;
 
--- \c employee_tracker_db;
+\c employee_tracker_db;
 
 CREATE TABLE departments (
   id SERIAL PRIMARY KEY,
   department VARCHAR(30) NOT NULL
 );
 
+-- DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
   id SERIAL PRIMARY KEY,
   title VARCHAR(50) NOT NULL,
@@ -16,6 +17,7 @@ CREATE TABLE roles (
   FOREIGN KEY(department_id) REFERENCES departments(id) ON DELETE CASCADE 
 );
 
+-- DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
   id SERIAL PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,

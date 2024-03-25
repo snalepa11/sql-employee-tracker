@@ -10,7 +10,7 @@ Inquirer: 8.2.4
 ## Usage 
 1. Clone Repository 
 2. Install all required packages to run program (PSQL and Inquirer)
-3. Open database using the command npm -U postgres in terminal and entering passord: postgres
+3. Open database using the command psql -U postgres in terminal and entering passord: postgres
 4. Open the employee_tracker_db unising the the comand \c employee_tracker_db
 4. Start program using the comand npm start in terminal 
 

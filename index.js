@@ -175,11 +175,11 @@ function newEmployee() {
 function updateRole(newEmployee) {
     db.query("SELECT * FROM roles", (err, roles) => {
 
-        const roleChoices = roles.map((role)=> ({ name: role.title, value: role.id}))
+        const roleChoices = roles.rows.map((role)=> ({ name: role.title, value: role.id}))
 
         db.query("SELECT * FROM employees", (err, employees) => {
 
-            const employeeChoices = employees.map((person)=> ({ name: person.first_name + " " + person.last_name, value: person.id}))
+            const employeeChoices = employees.rows.map((person)=> ({ name: person.first_name + " " + person.last_name, value: person.id}))
 
         inquirer.prompt([
             {
@@ -195,14 +195,13 @@ function updateRole(newEmployee) {
                 choices: roleChoices
             },
         ]).then((answer) => {
+            console.log(answer);
             db.query(
                 `UPDATE employees 
            SET role_id = ${answer.role_id}
-           WHERE id = ${answer.emplyee_id}`,
-                (err, result) => {
+            WHERE id = ${answer.employee_id}`,
+                (err) => {
                     if (err) throw err;
-                    console.log("Viewing New Employee: ");
-                    console.table(result);
                     employee_tracker();
                 });
         });
