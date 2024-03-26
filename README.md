@@ -15,6 +15,8 @@ Inquirer: 8.2.4
 4. Start program using the comand npm start in terminal 
 
 ## Demo 
+[Untitled_ Mar 26, 2024 10_34 AM.webm.zip](https://github.com/snalepa11/sql-employee-tracker/files/14761005/Untitled_.Mar.26.2024.10_34.AM.webm.zip)
+
 
 ## Links
 GitHub Link: https://github.com/snalepa11/sql-employee-tracker
