@@ -18,4 +18,4 @@ Inquirer: 8.2.4
 
 ## Links
 GitHub Link: https://github.com/snalepa11/sql-employee-tracker
-Deployed Link: 
+Deployed Link: https://snalepa11.github.io/sql-employee-tracker/
